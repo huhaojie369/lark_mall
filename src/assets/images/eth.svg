@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.2 (81672) - https://sketch.com -->
+    <title>avart/eos small normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="-138.348067%" y1="-68.0766859%" x2="83.7376645%" y2="78.90625%" id="linearGradient-1">
+            <stop stop-color="#CFD2E8" offset="0%"></stop>
+            <stop stop-color="#5D607A" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="lark商城" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="第一次进入商城-选择钱包" transform="translate(-146.000000, -219.000000)">
+            <g id="编组-5" transform="translate(32.000000, 200.000000)">
+                <g id="Views-/-Alert-/-2-Buttons-With-Description-&amp;-Text-Field-Copy">
+                    <g id="Views-/-Alert-/-2-Buttons-With-Description-&amp;-Text-Field">
+                        <g id="编组" transform="translate(114.000000, 19.000000)">
+                            <g id="avart/eth">
+                                <g>
+                                    <circle id="Oval" fill="url(#linearGradient-1)" fill-rule="nonzero" cx="8" cy="8" r="8"></circle>
+                                    <g id="以太坊" transform="translate(5.052632, 2.947368)">
+                                        <polygon id="Path" fill="#8A8A8A" fill-rule="nonzero" points="2.8818747 6.82782621 0 4.99894419 2.8818747 0.182888202 5.7637494 4.99894419"></polygon>
+                                        <polygon id="Path" fill="#B0B2CF" fill-rule="nonzero" points="2.8818747 9.75403744 0 5.54760879 2.8818747 7.31552808 5.7637494 5.54760879"></polygon>
+                                        <path d="M2.87764985,9.74787079 L0,5.54760879 L2.87764985,7.3129363 L2.87764985,9.74787079 Z" id="Combined-Shape" fill="#EBEDFA"></path>
+                                        <path d="M2.87764985,6.82514506 L0,4.99894419 L2.87764985,0.189948567 L2.87764985,6.82514506 Z" id="Combined-Shape" fill="#C7C7C7" fill-rule="nonzero"></path>
+                                        <polygon id="Path" fill="#EBEDFA" points="2.8818747 6.82782621 0 4.99894419 2.8818747 0.182888202 5.7637494 4.99894419"></polygon>
+                                        <path d="M2.86132812,6.81478704 L2.86132812,0.217224687 L2.8818747,0.182888202 L5.7637494,4.99894419 L2.8818747,6.82782621 L2.86132812,6.81478704 Z" id="Combined-Shape" fill="#BDC0DE"></path>
+                                        <path d="M2.87860928,6.82575393 L0,4.99894419 L0.051909986,4.91219462 L2.87860928,3.88179649 L2.87860928,6.82575393 Z" id="Combined-Shape" fill="#C6CAE8"></path>
+                                        <path d="M2.87860928,6.82575393 L2.87860928,3.88179649 L5.72181627,4.92886748 L5.7637494,4.99894419 L2.8818747,6.82782621 L2.87860928,6.82575393 Z" id="Combined-Shape" fill="#A3A6BF"></path>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
