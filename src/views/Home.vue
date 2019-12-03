@@ -5,54 +5,59 @@
     <div class="content">
       <div class="main">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-          <van-row gutter="20">
-            <van-col span="12" v-for="(item,index) in mallList" :key="index">
-              <router-link class="MHomeLink" :to="'/details/' +item.gid">
-                <div class="link_img">
-                  <img @error="defImg()" :src="item.image" >
-                </div>
-                <div class="link_title"> 
-                  <p class="van-multi-ellipsis--l2">{{ item.title }}</p>
-                </div>
-                <div class="link_label">
-                  <span v-for="(labels,keyed) in item.label" :key="keyed"
-                  :class="labelsfunc(labels)">
-                    <template >{{ labels }}</template>
-                  </span>
-                  <!-- <span class="orange">热门</span> -->
-                  <!-- <span class="yellow">一周年纪念</span> -->
-                </div>
-                <div class="link_footer">
-                  <span class="price">
-                    {{ item.price }} Lark
-                  </span>
-                  <span class="exchange">
-                    已兑{{ item.exchanged }}份
-                  </span>
-                </div>
-              </router-link>
-            </van-col>
-          </van-row>
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            @load="onLoad">
+            <van-row type="flex" gutter="20">
+              <van-col 
+                span="12" 
+                v-for="(item,index) in mallList"
+                :key="index">
+                <router-link class="MHomeLink" :to="'/details/' + item.gid">
+                  <div class="link_img">
+                    <img @error="defImg()" :src="item.image">
+                  </div>
+                  <div class="link_title"> 
+                    <p class="van-multi-ellipsis--l2">{{ item.title }}</p>
+                  </div>
+                  <div class="link_label">
+                    <span v-for="(labels,keyed) in item.label" :key="keyed"
+                    :class="labelsfunc(labels)">
+                      <template >{{ labels }}</template>
+                    </span>
+                  </div>
+                  <div class="link_footer">
+                    <span class="price">
+                      {{ item.price }} Lark
+                    </span>
+                    <span class="exchange">
+                      已兑{{ item.exchanged }}份
+                    </span>
+                  </div>
+                </router-link>
+              </van-col>
+            </van-row>
+          </van-list>
         </van-pull-refresh>
       </div>
 
     </div>
 
     <Footer :active = 0 ></Footer>
-
   </div>
 </template>
 
 <script>
 import Header from '@/components/header.vue'
 import Footer from '@/components/footer'
-import { Toast, Icon, PullRefresh, Row, Col, NoticeBar } from 'vant';
+import { Toast, Icon, List, PullRefresh, Row, Col, NoticeBar } from 'vant';
 import homesvg from '@/assets/images/home.png';
 import homeactivesvg from '@/assets/images/homeactive.png';
 import ordersvg from '@/assets/images/order.png';
 import orderactivesvg from '@/assets/images/orderactive.png';
 
-// import vueWaterfallEasy from 'vue-waterfall-easy' // 瀑布流插件
 // 默认展示图片
 import defaultPhoto from '@/assets/images/logo.svg';
 
@@ -64,10 +69,10 @@ export default {
     [Row.name] :Row,
     [Col.name] :Col,
     [Icon.name] :Icon,
+    [List.name] :List,
     [Toast.name] :Toast,
     [NoticeBar.name] :NoticeBar,
     [PullRefresh.name] :PullRefresh,
-    // vueWaterfallEasy
   },
   data() {
     return{
@@ -76,18 +81,98 @@ export default {
         iswallet: true,
         text: "L A R K 商城"
       },
-      isLoading: false,
-      defaultImg: require('../assets/images/logo.svg'),
-      mallList: [{
-        exchanged: 8000,
-        gid: 1,
-        image: "http://wallet.admin/uploads/572061a79bf6e9d4673bc8febbac6915.jpg",
-        label: ["热门", "抢购"],
-        price: 1000,
-        title: "苹果手机离开红军看来进口鳞茎离开金陵科技快乐教皇克莱简历库离开离开了简历库",
-      }
+      disabled: false, // 瀑布流
+      isWshow: false, // 是否显示切换钱包
+      isLoading: false, // Loading
+      list: [],
+      loading: false,
+      finished: false,
+      defaultImg: require('../assets/images/logo.svg'), // 默认图片
+      mallList: [
+        {
+        desc: null,
+        exchanged: 1,
+        gid: 5,
+        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
+        limit: 9999,
+        price: 288,
+        status: 1,
+        supply: 9999,
+        title: "VIP 4",
+        virtual: 132,
+        },
+        {
+        desc: null,
+        exchanged: 1,
+        gid: 5,
+        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
+        limit: 9999,
+        price: 288,
+        label: ["热门"],
+        status: 1,
+        supply: 9999,
+        title: "asdasdasd奥术大师多奥术大师大所奥术大师大所",
+        virtual: 132,
+        },
+        {
+        desc: null,
+        exchanged: 1,
+        gid: 5,
+        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
+        limit: 9999,
+        price: 288,
+        status: 1,
+        supply: 9999,
+        title: "VIP 4",
+        virtual: 132,
+        },
+        {
+        desc: null,
+        exchanged: 1,
+        gid: 5,
+        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
+        limit: 9999,
+        price: 288,
+        label: ["热门"],
+        status: 1,
+        supply: 9999,
+        title: "asdasdasd奥术大师多奥术大师大所奥术大师大所",
+        virtual: 132,
+        },
+        {
+        desc: null,
+        exchanged: 1,
+        gid: 5,
+        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
+        limit: 9999,
+        price: 288,
+        label: ["热门"],
+        status: 1,
+        supply: 9999,
+        title: "asdasdasd奥术大师多奥术大师大所奥术大师大所",
+        virtual: 132,
+        },
+        {
+        desc: null,
+        exchanged: 1,
+        gid: 5,
+        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
+        limit: 9999,
+        price: 288,
+        status: 1,
+        supply: 9999,
+        title: "VIP 4",
+        virtual: 132,
+        },
       ],
-      labels: [],
+    }
+  },
+  computed: {
+    itemWidth() {
+      return 133 * 0.5 * (document.documentElement.clientWidth / 375);
+    },
+    gutterWidth() {
+      return 10 * 0.5 * (document.documentElement.clientWidth / 375);
     }
   },
   methods: {
@@ -123,6 +208,7 @@ export default {
       this.axios.get('/mall').then((res) => {
         if(res.status === 200) {
           this.mallList = res.data.data
+          console.log('数据加载完成');
         }
       })
     },
@@ -132,7 +218,21 @@ export default {
         this.isLoading = false;
       }, 500);
     },
+    onLoad() {
+      // 异步更新数据
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1);
+        }
+        // 加载状态结束
+        this.loading = false;
 
+        // 数据全部加载完成
+        if (this.list.length >= 40) {
+          this.finished = true;
+        }
+      }, 500);
+    }
   },
   mounted () {
     this.getMalls();
@@ -154,6 +254,12 @@ export default {
     padding: 28rem/@base;
     background-color: #fff;
   }
+  .van-row.van-row--flex{
+    flex-wrap: wrap;
+    .van-col{
+      margin: 7.5px 0;
+    }
+  }
   .content /deep/ .van-pull-refresh{
     overflow: inherit;
   }
@@ -165,7 +271,6 @@ export default {
     height: 100%;
     display: block;
     position: relative;
-    margin: 7.5px 0;
     img {
       display: block;
       width: 100%;

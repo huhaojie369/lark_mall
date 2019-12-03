@@ -158,7 +158,7 @@ export default {
     getDetails() {
       this.axios.get(`/mall/${this.$route.params.id}`).then((res) => {
         if(res.status === 200) this.detail = res.data.data
-        console.log(this.detail);
+        // console.log(this.detail);
       })
     },
     onRefresh() {
@@ -208,7 +208,7 @@ export default {
         }
       }
 
-      console.log('object',params);
+      // console.log('object',params);
       this.axios.post(`/mall/${this.detail.gid}`,params)
       .then((res) => {
         if(res.status === 200) {

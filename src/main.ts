@@ -12,14 +12,13 @@ import { Toast } from 'vant';
 // rem自适应less
 import './assets/css/adapter.less';
 // 全局注册axios  VueAxios-作用是不用手动添加到vue原型上就可以直接使用
-Vue.use(VueAxios, axios)
+Vue.use( VueAxios, axios )
 
 // 全局注册提示弹框
 Vue.use( Toast )
 
-
 // 配置公共的接口地址：
-axios.defaults.baseURL = 'http://192.168.31.240/api/'
+axios.defaults.baseURL = 'http://192.168.31.101/api/'
 
 
 // axios 拦截器
@@ -49,7 +48,6 @@ axios.interceptors.response.use(function (response) {
 
 // 设置为 false 以阻止 vue 在启动时生成生产提示。
 Vue.config.productionTip = false
-
 
 new Vue({
   router,

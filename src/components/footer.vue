@@ -61,8 +61,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
   .footer /deep/ .van-tabbar{
+    max-width: 750px;
     height: 120rem/50;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: rgba(239, 240, 240, 0.96);
   }
 </style>

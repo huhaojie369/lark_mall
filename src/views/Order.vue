@@ -30,7 +30,7 @@
         <div class="order_list_bottom">
           <div class="pic_item">
             合计：
-            <span>{{ Number(item.price) * Number(item.amount) }} Lark</span>
+            <span>{{ Number(item.unit) * Number(item.amount) }} Lark</span>
           </div>
           <div class="pic_btn">
             <span v-if="item.virtual == 0" class="check_order" @click="seeLog">查看物流</span>
@@ -100,7 +100,7 @@ export default {
           status: 0,
           title: "IPhone 2019",
           tracking: null,
-          price: 5,
+          unit: 5,
           virtual: 0, // 实物
         }
       ],
@@ -113,7 +113,7 @@ export default {
     getorders() {
       this.axios.get(`/orders`).then((res) => {
         if(res.status === 200) this.orders = res.data.data
-        console.log(this.orders);
+        // console.log(this.orders);
       })      
     },
     seeLog() {
