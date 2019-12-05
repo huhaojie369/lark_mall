@@ -187,7 +187,7 @@ export default {
     // 与原生交互==================================
     // 切换钱包
     CBswitchAccount(msg) {
-      console.log('msg',msg);
+      // console.log('msg',msg);
       if(msg){
         window.localStorage.setItem('token',msg);
         // this.walletInfo.balance = msg.balance
