@@ -165,6 +165,7 @@ export default {
       border-radius:4px;
       img{
         width: 100%;
+        height: 100%;
       }
     }
     .list_info_right{

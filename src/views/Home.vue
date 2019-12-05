@@ -156,7 +156,6 @@ export default {
     onRefresh() {
       setTimeout(() => {
         this.getMalls();
-        this.$toast('刷新成功');
         this.isLoading = false;
       }, 500);
     },
