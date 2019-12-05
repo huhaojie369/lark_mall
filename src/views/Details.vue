@@ -159,7 +159,7 @@ export default {
       // detals 里面默认添加一张图片，否则vue初始化时会报错
       detail: {
         image: [
-          "http://wallet.admin/uploads/images/631698ca490ac793132883a6421992eb.jpeg"
+          ""
         ]
       },
       tips: null,

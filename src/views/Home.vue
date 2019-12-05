@@ -99,18 +99,7 @@ export default {
       finished: false,
       defaultImg: require('../assets/images/logo.svg'), // 默认图片
       mallList: [
-        {
-        desc: null,
-        exchanged: 1,
-        gid: 1,
-        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
-        limit: 9999,
-        price: 288,
-        status: 1,
-        supply: 9999,
-        title: "VIP 4",
-        virtual: 132,
-        },
+        
       ],
     }
   },
@@ -222,7 +211,7 @@ export default {
   mounted () {
 
     // 获取列表
-    this.getMalls();
+    this.onRefresh();
     // window注册message事件
     window.addEventListener('message', function(event) {
       if (event.data && event.data.type == 'callback') {
