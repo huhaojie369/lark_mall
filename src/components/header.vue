@@ -68,7 +68,7 @@ export default {
     getMe() {
       this.axios.get('/me').then((res) => {
         if(res.status === 200) {
-          console.log(res);
+          // console.log(res);
           this.integral_num = res.data.data.integral_num
           // this.mallList = res.data.data
         }
@@ -112,7 +112,7 @@ export default {
     this.getMe()
     window.addEventListener('message', function(event) {
       if (event.data && event.data.type == 'callback') {
-        console.log(event.data);
+        // console.log(event.data);
         var name = event.data.name;
         window[name](event.data.msg)
       }

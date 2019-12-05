@@ -41,7 +41,7 @@ axios.interceptors.request.use(function (config) {
 /* // 响应拦截器
 axios.interceptors.response.use(function (response) {
   // 所有请求完成后都要执行的操作
-  console.log('axios 的响应拦截器')
+  // console.log('axios 的响应拦截器')
 
   return response
 }) */
