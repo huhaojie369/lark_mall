@@ -16,7 +16,7 @@
         <div class="order_list_info">
           <div class="list_info_left">
             <img
-              src="//m.360buyimg.com/mobilecms/s750x750_jfs/t1/58683/9/5935/113951/5d397c88Eb219713a/12b2a9534969f7b3.jpg!q80.dpg.webp"
+              :src="item.image"
             />
           </div>
           <div class="list_info_right">
@@ -88,21 +88,21 @@ export default {
         text: "我的订单" // 头部文案
       },
       orders:[
-        {
-          address: "M78星云",
-          amount: 1,
-          courier: null,
-          gid: 1,
-          image: "//img12.360buyimg.com/mobilecms/s372x372_jfs/t1/40586/1/11155/200870/5d49255fEa7738b29/b3e5895230af9915.jpg!q70.dpg.webp",
-          oid: 47,
-          phone: "13512345678",
-          receiver: "黑椒组长",
-          status: 0,
-          title: "IPhone 2019",
-          tracking: null,
-          unit: 5,
-          virtual: 0, // 实物
-        }
+        // {
+        //   address: "M78星云",
+        //   amount: 1,
+        //   courier: null,
+        //   gid: 1,
+        //   image: "//img12.360buyimg.com/mobilecms/s372x372_jfs/t1/40586/1/11155/200870/5d49255fEa7738b29/b3e5895230af9915.jpg!q70.dpg.webp",
+        //   oid: 47,
+        //   phone: "13512345678",
+        //   receiver: "黑椒组长",
+        //   status: 0,
+        //   title: "IPhone 2019",
+        //   tracking: null,
+        //   unit: 5,
+        //   virtual: 0, // 实物
+        // }
       ],
     };
   },

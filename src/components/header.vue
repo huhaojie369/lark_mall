@@ -12,16 +12,17 @@
       <van-icon v-if="headerobj.iswallet" size="40px" :name="walletIco" slot="right" />
       <transition name="van-fade" slot="right">
         <div class="opt_wallet_wrap" v-show="isWshow">
-          <div @click.stop  class="opt_wallet" ref="mbMenu">
-            <div class="wallet_name">
+          <div @click.stop  class="opt_wallet">
+            <!-- <div class="wallet_name">
               钱包
               <span class="user_name">-</span>
-            </div>
+            </div> -->
             <div class="wallet_over">
               余额
-              <span class="user_over">-</span>
+              <span v-if="integral_num" class="user_over">{{ integral_num }} Lark</span>
+              <span v-else class="user_over">-</span>
             </div>
-            <div class="toogle_btn" @click.stop="toogleWallet">切换钱包</div>
+            <!-- <div class="toogle_btn" @click.stop="toogleWallet">切换钱包</div> -->
           </div>
         </div>
       </transition>
@@ -48,7 +49,8 @@ export default {
   data() {
     return {
       walletIco,
-      isWshow: false
+      isWshow: false,
+      integral_num: null,
     };
   },
   watch: {
@@ -63,21 +65,58 @@ export default {
     }
   },
   methods: {
+    getMe() {
+      this.axios.get('/me').then((res) => {
+        if(res.status === 200) {
+          console.log(res);
+          this.integral_num = res.data.data.integral_num
+          // this.mallList = res.data.data
+        }
+      })
+    },
     onClickLeft() {
-      // this.$router.go(-1);
       if (!this.headerobj.iscross) {
-        // console.log('后退');
-        this.$router.go(-1);
+        this.$router.go(-1); // 后退商城
       } else {
-        // console.log('关闭');
+        this.sendPraRequest("closeMall") // 关闭商城
       }
     },
     onClickRight() {
       this.isWshow = !this.isWshow;
     },
-    toogleWallet() {
-      this.$toast("切换钱包");
-    }
+    getOperatingSystem() {
+      if(/android/i.test(navigator.userAgent)){
+        return 'Android'
+      }
+      if(/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+        return 'iOS'
+        }
+    },
+    // 原生交互事件
+    sendPraRequest(methodName, params, cbName) {
+      var device_type = this.getOperatingSystem()
+        var message = {
+        'method': methodName,
+        'params': params,
+        'callback': cbName
+        }
+      if (device_type === 'Android') {
+        window.ReactNativeWebView.postMessage('sendLarkMarketRequest=' + JSON.stringify(message))
+      } else if (device_type === 'iOS') {
+        window.webkit.messageHandlers.Larkshop.postMessage(message)
+      }
+    },
+  },
+  mounted() {
+    // 获取用户信息
+    this.getMe()
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type == 'callback') {
+        console.log(event.data);
+        var name = event.data.name;
+        window[name](event.data.msg)
+      }
+    }, false);
   },
 };
 </script>

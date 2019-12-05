@@ -6,7 +6,7 @@
       <div class="pic_list">
         <van-swipe :autoplay="3000" indicator-color="#582adc">
           <van-swipe-item v-for="(item,index) in detail.image" :key="index">
-            <img :src="item"/>
+            <img :src="item" />
           </van-swipe-item>
         </van-swipe>
       </div>
@@ -17,45 +17,47 @@
       <div class="pic_prompt">该物品不可退货</div>
       <div class="pic_product">
         <div class="pic_product_title">商品详情</div>
-        {{ detail.desc }}
-      </div>
-      <div class="lark_navs">
-        <div class="exchange_btn" @click="showtransform">立即兑换</div>
+        <p class="desc">{{ detail.desc }}</p>
       </div>
     </van-pull-refresh>
 
+    <div class="lark_navs">
+      <div
+        :class="{ 'disabled' : detail.status != 1 }"
+        class="exchange_btn"
+        @click="showtransform"
+      >立即兑换</div>
+    </div>
+
     <van-action-sheet v-model="first_step">
       <div class="mall_info van-hairline--bottom">
-        <div class="info_left"></div>
+        <div class="info_left">
+          <img :src="detail.image[0]" />
+        </div>
         <div class="info_right">
-          <div class="right_title">
-            {{ detail.title }}
-          </div>
-          <div class="right_pic">
-            {{ detail.price }} Lark
-          </div>
+          <div class="right_title">{{ detail.title }}</div>
+          <div class="right_pic">{{ detail.price }} Lark</div>
         </div>
       </div>
       <div class="buy_con">
         <div class="buy_wrap">
           <div class="buy_wrap_left">
             <span class="left_title">购买数量</span>
-            <span >剩余  {{ detail.supply }} 件</span>
+            <span>剩余 {{ detail.supply }} 件</span>
           </div>
           <div class="buy_wrap_right">
-            <van-stepper 
-              min="1" 
-              :max="detail.limit || detail.supply" 
-              :disable-input= "true"
+            <van-stepper
+              min="1"
+              :max="detail.limit || detail.supply"
+              :disabled="detail.attr > 128"
+              :disable-input="true"
               v-model="stepper_value"
-               />
+            />
             <div class="stint_num">
-              <template v-if="stepper_value >= detail.supply || detail.supply == null">
-                库存不足
-              </template>
-              <template v-if="stepper_value >= detail.limit && detail.limit != null">
-                每人限购{{ detail.limit }}份
-              </template>
+              <template v-if="stepper_value >= detail.supply || detail.supply == null">库存不足</template>
+              <template
+                v-if="stepper_value >= detail.limit && detail.limit != null"
+              >每人限购{{ detail.limit }}份</template>
             </div>
           </div>
         </div>
@@ -63,54 +65,51 @@
       </div>
     </van-action-sheet>
 
-    <van-action-sheet v-if="detail.virtual === 0" v-model="second_step" title="收货信息">
-        <van-field
-          v-model="receive_name"
-          required
-          clearable
-          placeholder="请填写收货人姓名"
-        />
-        <van-field 
-          v-model="receive_phone" 
-          clearable
-          :required="true" 
-          placeholder="请填写收货人手机号" 
-          error-message=""/>
-        <van-field v-model="receive_address" clearable :required="true" rows="2" autosize :show-word-limit="true" type="textarea" placeholder="请填写详细地址" />
+    <van-action-sheet v-if="detail.attr === 0" v-model="second_step" title="收货信息">
+      <van-field v-model="receive_name" required clearable placeholder="请填写收货人姓名" />
+      <van-field
+        v-model="receive_phone"
+        clearable
+        :required="true"
+        placeholder="请填写收货人手机号"
+        error-message
+      />
+      <van-field
+        v-model="receive_address"
+        clearable
+        :required="true"
+        rows="2"
+        autosize
+        :show-word-limit="true"
+        type="textarea"
+        placeholder="请填写详细地址"
+      />
       <div class="step_bottom">
         <div class="sum">
           合计:
-          <span> {{ Number(detail.price) *  Number(stepper_value) }} Lark</span>
+          <span>{{ Number(detail.price) * Number(stepper_value) }} Lark</span>
         </div>
         <div class="submit_btn" @click="submitBtn">提交订单</div>
-
       </div>
     </van-action-sheet>
 
-    <van-action-sheet 
-      v-if="detail.virtual === 1" 
-      v-model="second_step" 
-      title-name="cross" 
-      title="订单信息">
+    <van-action-sheet v-if="detail.attr != 0" v-model="second_step" title-name="cross" title="订单信息">
       <div class="mall_info van-hairline--bottom">
         <div class="info_left"></div>
         <div class="info_right">
-          <div class="right_title">
-            一加 OnePlus 7 Pro 2K+90Hz 流体屏 骁龙855旗舰 4800万超广角三摄 8GB+256GB 星雾蓝 全面屏拍照游戏手机
-          </div>
+          <div class="right_title">{{ detail.title }}</div>
           <div class="right_pic">
-           <span>{{ detail.price }} Lark</span>
-           <span id="buy_number">x {{ stepper_value }}</span>
+            <span>{{ detail.price }} Lark</span>
+            <span id="buy_number">x {{ stepper_value }}</span>
           </div>
         </div>
       </div>
       <div class="step_bottom">
         <div class="sum">
           合计:
-          <span> {{ Number(detail.price) *  Number(stepper_value) }} Lark</span>
+          <span>{{ Number( detail.price ) * Number( stepper_value) }} Lark</span>
         </div>
         <div class="submit_btn" @click="submitBtn">提交订单</div>
-
       </div>
     </van-action-sheet>
   </div>
@@ -118,7 +117,19 @@
 
 <script>
 import Header from "../components/header.vue";
-import { Sku, Icon, Swipe, Field, Button, SwipeItem, CellGroup, PullRefresh, ActionSheet, Stepper } from "vant";
+import {
+  Sku,
+  Icon,
+  Swipe,
+  Field,
+  Button,
+  Dialog,
+  SwipeItem,
+  CellGroup,
+  PullRefresh,
+  ActionSheet,
+  Stepper
+} from "vant";
 
 export default {
   components: {
@@ -128,6 +139,7 @@ export default {
     [Swipe.name]: Swipe,
     [Field.name]: Field,
     [Button.name]: Button,
+    [Dialog.name]: Dialog,
     [Stepper.name]: Stepper,
     [CellGroup.name]: CellGroup,
     [SwipeItem.name]: SwipeItem,
@@ -140,26 +152,31 @@ export default {
         iswallet: false,
         text: "商品详情"
       },
-
       first_step: false,
       second_step: false,
       stepper_value: 1,
       isLoading: false,
-      detail: {},
+      // detals 里面默认添加一张图片，否则vue初始化时会报错
+      detail: {
+        image: [
+          "http://wallet.admin/uploads/images/631698ca490ac793132883a6421992eb.jpeg"
+        ]
+      },
+      tips: null,
       receive_name: null,
       receive_phone: null,
-      receive_address: null,
+      receive_address: null
     };
   },
-  mounted () {
-    this.getDetails()
-  },
+
   methods: {
     getDetails() {
-      this.axios.get(`/mall/${this.$route.params.id}`).then((res) => {
-        if(res.status === 200) this.detail = res.data.data
-        // console.log(this.detail);
-      })
+      this.axios.get(`/mall/${this.$route.params.id}`).then(res => {
+        if (res.status === 200) {
+          this.detail = res.data.data.good;
+          this.tips = res.data.data.tag;
+        }
+      });
     },
     onRefresh() {
       setTimeout(() => {
@@ -167,117 +184,122 @@ export default {
         this.isLoading = false;
       }, 500);
     },
-    showtransform(){
-      this.first_step = true
+    showtransform() {
+      if (this.detail.status == 1) {
+        this.first_step = true;
+      } else {
+        this.$toast(this.tips);
+      }
     },
-    nextBtn(){
-      this.axios.get(`/receiver-info`).then((res) => {
-        if(res.status === 200) {
-          this.receive_name = res.data.data.name
-          this.receive_phone = res.data.data.phone
-          this.receive_address =  res.data.data.address
+    nextBtn() {
+      this.axios.get(`/receiver-info`).then(res => {
+        if (res.status === 200 && res.data.data != null) {
+          this.receive_name = res.data.data.name;
+          this.receive_phone = res.data.data.phone;
+          this.receive_address = res.data.data.address;
         }
-      })
-      this.first_step = false
-      this.second_step = true
+      });
+      this.first_step = false;
+      this.second_step = true;
     },
     submitBtn() {
-      let params 
-      // 表单校验
-      if(this.detail.virtual === 0){
-        if(this.receive_name == '' || this.receive_name == null) return this.$toast("收货人不能为空");
-        if(this.receive_phone == '' || this.receive_phone == null){
-          return this.$toast("收货人手机不能为空");
-        }else{
-          var re = /^1[345678]\d{9}$/;
-          if(!re.test(this.receive_phone)){
-            return this.$toast("手机号格式不正确");
+      Dialog.confirm({
+        title: '是否确认购买？',
+      }).then(() => {
+        let params;
+        // 表单校验
+        if (this.detail.attr === 0) {
+          if (this.receive_name == "" || this.receive_name == null)
+            return this.$toast("收货人不能为空");
+          if (this.receive_phone == "" || this.receive_phone == null) {
+            return this.$toast("收货人手机不能为空");
+          } else {
+            var re = /^1[345678]\d{9}$/;
+            if (!re.test(this.receive_phone)) {
+              return this.$toast("手机号格式不正确");
+            }
           }
-        }
-        if(this.receive_address == '' || this.receive_address == null) return this.$toast("收货人地址不能为空");
+          if (this.receive_address == "" || this.receive_address == null)
+            return this.$toast("收货人地址不能为空");
 
-        params = {
-          amount: this.stepper_value,
-          name: this.receive_name,
-          address: this.receive_address,
-          phone: this.receive_phone
+          params = {
+            amount: this.stepper_value,
+            name: this.receive_name,
+            address: this.receive_address,
+            phone: this.receive_phone
+          };
+        } else {
+          params = {
+            amount: this.stepper_value
+          };
         }
-      }else{
-        params = {
-          amount: this.stepper_value,
-        }
-      }
 
-      // console.log('object',params);
-      this.axios.post(`/mall/${this.detail.gid}`,params)
-      .then((res) => {
-        if(res.status === 200) {
-          return this.$router.push('/status')
-        }
-      })
-      .catch((err) => {
-        return this.$toast(err.response.data.msg);
-      })
-
-      // this.axios(
-      //   `http://192.168.31.240/api/mall/${this.detail.gid}`,
-      //   "POST",
-      //   params,
-      //   res => {
-      //     if(res.status === 200) {
-      //       return this.$router.push('/status')
-      //     }
-      //   },
-      //   error => {}
-      // );
-      
-         
+        this.axios
+          .post(`/mall/${this.detail.gid}`, params)
+          .then(res => {
+            if (res.status === 200) {
+              return this.$router.push("/status");
+            }
+          })
+          .catch(err => {
+            return this.$toast(err.response.data.msg);
+          });
+      }).catch(() => {
+        // on cancel
+      });
     }
   },
-  watch: {
+  mounted() {
+    this.getDetails();
 
-  },
+    window.addEventListener("message",function(event) {
+      if (event.data && event.data.type == "callback") {
+          var name = event.data.name;
+          window[name](event.data.msg);
+      }
+    },false);
+  }
 };
 </script>
 
 <style lang="less" scoped>
-/deep/ .van-action-sheet__header{
+/deep/ .van-action-sheet__header {
   text-align: left;
   padding-left: 15px;
 }
 
-/deep/  .van-stepper__minus, .van-stepper__plus{
+/deep/ .van-stepper__minus,
+.van-stepper__plus {
   background-color: #fff0;
 }
-/deep/  .van-field__control{
+/deep/ .van-field__control {
   width: 100%;
   min-height: 45px;
-  color: #34333D;
+  color: #34333d;
   background: #f5f5fa;
   border-radius: 4px;
   border: 1px solid #fff0;
-  padding:0 40px 0 15px;
-  &:focus{
+  padding: 0 40px 0 15px;
+  &:focus {
     border: 1px solid #5829db;
   }
 }
-/deep/  .van-field__clear{
+/deep/ .van-field__clear {
   margin: 0;
   position: absolute;
   right: 6px;
-
 }
- /deep/ .van-stepper__plus{
+/deep/ .van-stepper__plus {
   background-color: #fff0;
 }
-/deep/  .van-stepper__input{
+/deep/ .van-stepper__input {
   background: #e3d9ff;
-  color: #5829DB;
+  color: #5829db;
   font-weight: 600;
   border-radius: 5px;
   width: 30px;
 }
-.van-popup--bottom.van-popup--round{
+.van-popup--bottom.van-popup--round {
   border-radius: 8px 8px 0 0;
 }
 .details {
@@ -323,12 +345,15 @@ export default {
     color: #34333d;
     font-size: 16px;
     margin-bottom: 0.76rem;
+    .desc{
+      margin-bottom: 20px;
+    }
   }
 }
 .lark_navs {
   position: fixed;
   bottom: 0;
-  max-width: 100%;
+  max-width: 750px;
   min-width: 320px;
   width: 100%;
   height: 70px;
@@ -354,73 +379,82 @@ export default {
   background: linear-gradient(90deg, #8542f9 0%, #452dc2 100%);
   box-shadow: 0px 5px 13px 0px rgba(88, 41, 219, 0.42);
   border-radius: 20px;
+  &.disabled {
+    background: rgba(115, 114, 124, 0.76);
+    box-shadow: none;
+  }
 }
-.info_left{
+
+.info_left {
   width: 70px;
   height: 70px;
   background-color: #7f7c94;
   border-radius: 4px;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
-.mall_info{
+.mall_info {
   display: flex;
   padding: 15px;
-  .info_right{
+  .info_right {
     margin-left: 15px;
     width: 73%;
   }
-  .right_title{
-    color: #1C1C21;
+  .right_title {
+    color: #1c1c21;
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 10px;
     padding-right: 10px;
   }
-  .right_pic{
+  .right_pic {
     font-size: 13px;
-    color: #7F7C94;
+    color: #7f7c94;
     display: flex;
     justify-content: space-between;
   }
 }
-.buy_con{
+.buy_con {
   padding: 15px 20px;
-  .buy_wrap{
+  .buy_wrap {
     display: flex;
     justify-content: space-between;
     padding: 1rem 0;
-    .buy_wrap_left{
+    .buy_wrap_left {
       display: flex;
       flex-direction: column;
-      color: #A8A5C4;
+      color: #a8a5c4;
       font-size: 12px;
     }
-    .left_title{
-      color: #4C4B59;
+    .left_title {
+      color: #4c4b59;
       font-size: 14px;
       margin-bottom: 4px;
     }
-    .stint_num{
+    .stint_num {
       text-align: right;
       font-size: 12px;
-      color: #FE3F22;
+      color: #fe3f22;
     }
   }
 }
-.step_bottom{
+.step_bottom {
   padding: 20px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  .sum{
-    color: #4C4B59;
+  .sum {
+    color: #4c4b59;
     font-size: 12px;
-    span{
-      color: #F6A219;
+    span {
+      color: #f6a219;
       font-size: 16px;
     }
   }
 }
-.submit_btn{
+.submit_btn {
   width: 182px;
   height: 42px;
   line-height: 42px;
@@ -431,5 +465,8 @@ export default {
   box-shadow: 0px 5px 13px 0px rgba(88, 41, 219, 0.42);
   border-radius: 20px;
 }
-
+.Timelimit{
+  color: #1c1c21;
+  font-size: 0.48rem;
+}
 </style>

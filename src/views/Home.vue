@@ -7,6 +7,8 @@
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
           <van-list
             v-model="loading"
+            :error.sync="error"
+            error-text="请求失败，请重新加载"
             :finished="finished"
             finished-text="没有更多了"
             @load="onLoad">
@@ -15,11 +17,14 @@
                 span="12" 
                 v-for="(item,index) in mallList"
                 :key="index">
-                <router-link class="MHomeLink" :to="'/details/' + item.gid">
-                  <div class="link_img">
-                    <img @error="defImg()" :src="item.image">
+                <div class="MHomeLink" @click="goDetails(item.gid, item.supply)">
+                  <div class="link_header">
+                    <img @error="defImg()" :src="item.image[0]">
+                    <div class="sellout_tips" v-if="item.supply <= 0">
+                        已售罄 补货中
+                    </div>
                   </div>
-                  <div class="link_title"> 
+                  <div class="link_title">
                     <p class="van-multi-ellipsis--l2">{{ item.title }}</p>
                   </div>
                   <div class="link_label">
@@ -36,7 +41,7 @@
                       已兑{{ item.exchanged }}份
                     </span>
                   </div>
-                </router-link>
+                </div>
               </van-col>
             </van-row>
           </van-list>
@@ -77,14 +82,19 @@ export default {
   data() {
     return{
       headerobj: {
-        iscross: false,
+        iscross: true,
         iswallet: true,
         text: "L A R K 商城"
+      },
+      walletInfo:{
+        balance: '-',
       },
       disabled: false, // 瀑布流
       isWshow: false, // 是否显示切换钱包
       isLoading: false, // Loading
+      error: false,
       list: [],
+      page: 1,
       loading: false,
       finished: false,
       defaultImg: require('../assets/images/logo.svg'), // 默认图片
@@ -92,70 +102,7 @@ export default {
         {
         desc: null,
         exchanged: 1,
-        gid: 5,
-        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
-        limit: 9999,
-        price: 288,
-        status: 1,
-        supply: 9999,
-        title: "VIP 4",
-        virtual: 132,
-        },
-        {
-        desc: null,
-        exchanged: 1,
-        gid: 5,
-        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
-        limit: 9999,
-        price: 288,
-        label: ["热门"],
-        status: 1,
-        supply: 9999,
-        title: "asdasdasd奥术大师多奥术大师大所奥术大师大所",
-        virtual: 132,
-        },
-        {
-        desc: null,
-        exchanged: 1,
-        gid: 5,
-        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
-        limit: 9999,
-        price: 288,
-        status: 1,
-        supply: 9999,
-        title: "VIP 4",
-        virtual: 132,
-        },
-        {
-        desc: null,
-        exchanged: 1,
-        gid: 5,
-        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
-        limit: 9999,
-        price: 288,
-        label: ["热门"],
-        status: 1,
-        supply: 9999,
-        title: "asdasdasd奥术大师多奥术大师大所奥术大师大所",
-        virtual: 132,
-        },
-        {
-        desc: null,
-        exchanged: 1,
-        gid: 5,
-        image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
-        limit: 9999,
-        price: 288,
-        label: ["热门"],
-        status: 1,
-        supply: 9999,
-        title: "asdasdasd奥术大师多奥术大师大所奥术大师大所",
-        virtual: 132,
-        },
-        {
-        desc: null,
-        exchanged: 1,
-        gid: 5,
+        gid: 1,
         image: "http://wallet.admin/uploads/images/d25d1b78fb8b5b156f1c4d2ab74e1e54.jpeg",
         limit: 9999,
         price: 288,
@@ -165,14 +112,6 @@ export default {
         virtual: 132,
         },
       ],
-    }
-  },
-  computed: {
-    itemWidth() {
-      return 133 * 0.5 * (document.documentElement.clientWidth / 375);
-    },
-    gutterWidth() {
-      return 10 * 0.5 * (document.documentElement.clientWidth / 375);
     }
   },
   methods: {
@@ -198,25 +137,36 @@ export default {
       img.src = this.defaultImg;
       img.onerror = null; //防止闪图
     },
+    // 首页
     goHome() {
        this.$router.push('home');
     },
+    // 订单页
     goOrder() {
       this.$router.push('order');
     },
+    // 获取商品列表
     getMalls() {
-      this.axios.get('/mall').then((res) => {
+      this.axios.get(`/mall?page= ${this.page}`).then((res) => {
         if(res.status === 200) {
           this.mallList = res.data.data
-          console.log('数据加载完成');
         }
       })
     },
     onRefresh() {
       setTimeout(() => {
+        this.getMalls();
         this.$toast('刷新成功');
         this.isLoading = false;
       }, 500);
+    },
+    // 判断是跳转至详情页面
+    goDetails(gid, supply) {
+      if(supply != 0) {
+        this.$router.push({path: `details/${gid}`})
+      }else if(supply == 0){
+        this.$toast('库存不足，正在补货中');
+      }
     },
     onLoad() {
       // 异步更新数据
@@ -232,10 +182,61 @@ export default {
           this.finished = true;
         }
       }, 500);
-    }
+  },
+
+
+    // 与原生交互==================================
+    // 切换钱包
+    CBswitchAccount(msg) {
+      console.log('msg',msg);
+      if(msg){
+        window.localStorage.setItem('token',msg);
+        // this.walletInfo.balance = msg.balance
+      }else {
+        // this.walletInfo.balance = '-'
+      }
+    },
+    getOperatingSystem() {
+      if(/android/i.test(navigator.userAgent)){
+        return 'Android'
+      }
+      if(/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+        return 'iOS'
+        }
+    },
+    // 原生交互事件
+    sendPraRequest(methodName, params, cbName) {
+      var device_type = this.getOperatingSystem()
+        var message = {
+        'method': methodName,
+        'params': params,
+        'callback': cbName
+        }
+      if (device_type === 'Android') {
+        window.ReactNativeWebView.postMessage('sendLarkMarketRequest=' + JSON.stringify(message))
+      } else if (device_type === 'iOS') {
+        window.webkit.messageHandlers.Larkshop.postMessage(message)
+      }
+    },
+
   },
   mounted () {
+
+    // 获取列表
     this.getMalls();
+    // window注册message事件
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type == 'callback') {
+        var name = event.data.name;
+        window[name](event.data.msg)
+      }
+    }, false);
+
+    // 事件挂载到window上面
+    window.CBswitchAccount = this.CBswitchAccount
+
+    this.sendPraRequest('getAccount',{},'CBswitchAccount')
+    
   }
 }
 </script>
@@ -275,9 +276,21 @@ export default {
       display: block;
       width: 100%;
     }
-    .link_img{
-      border-bottom: 1px solid #F5F5FA;
-      min-height: 336rem/@base;
+    .link_header{
+      height: 336rem/@base;
+      border-bottom: .5px solid #F5F5FA;
+      position: relative;
+      .sellout_tips{
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 48rem/@base;
+        line-height: 48rem/@base;
+        text-align: center;
+        color: #fff;
+        font-size: 20rem/@base;
+        background:rgba(127,124,148,0.76);
+      }
     }
     .link_title{
       min-height: 80rem/@base;
