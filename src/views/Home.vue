@@ -17,11 +17,17 @@
                 span="12" 
                 v-for="(item,index) in mallList"
                 :key="index">
-                <div class="MHomeLink" @click="goDetails(item.gid, item.supply)">
+                <div class="MHomeLink" @click="goDetails(item.gid, item.supply, item.status)">
                   <div class="link_header">
                     <img @error="defImg()" :src="item.image[0]">
                     <div class="sellout_tips" v-if="item.supply <= 0">
-                        已售罄 补货中
+                      已售罄 补货中
+                    </div>
+                    <div class="sellout_tips" v-if="item.status === 2">
+                      未开售
+                    </div>
+                    <div class="sellout_tips" v-if="item.status === 3">
+                      已售罄 补货中
                     </div>
                   </div>
                   <div class="link_title">
@@ -62,10 +68,9 @@ import homesvg from '@/assets/images/home.png';
 import homeactivesvg from '@/assets/images/homeactive.png';
 import ordersvg from '@/assets/images/order.png';
 import orderactivesvg from '@/assets/images/orderactive.png';
-
+//   Status 商品状态 1 正常销售 2 倒计时中  3 限时结束
 // 默认展示图片
 import defaultPhoto from '@/assets/images/logo.svg';
-
 export default {
   name: 'home',
   components: {
@@ -86,9 +91,6 @@ export default {
         iswallet: true,
         text: "L A R K 商城"
       },
-      walletInfo:{
-        balance: '-',
-      },
       disabled: false, // 瀑布流
       isWshow: false, // 是否显示切换钱包
       isLoading: false, // Loading
@@ -98,9 +100,7 @@ export default {
       loading: false,
       finished: false,
       defaultImg: require('../assets/images/logo.svg'), // 默认图片
-      mallList: [
-        
-      ],
+      mallList: [],
     }
   },
   methods: {
@@ -136,7 +136,7 @@ export default {
     },
     // 获取商品列表
     getMalls() {
-      this.axios.get(`/mall?page= ${this.page}`).then((res) => {
+      this.axios.get(`/mall`).then((res) => {
         if(res.status === 200) {
           this.mallList = res.data.data
         }
@@ -149,10 +149,15 @@ export default {
       }, 500);
     },
     // 判断是跳转至详情页面
-    goDetails(gid, supply) {
-      if(supply != 0) {
+    goDetails(gid, supply, productStatus) {
+      // 判断是否已经到达开售时间
+      if(productStatus == 2) return this.$toast('商品未开售');
+      // 判断是否已经到达结束时间
+      if(productStatus == 3) return this.$toast('商品已下架');
+      // 正常商品
+      if(supply != 0 &&  productStatus === 1) {
         this.$router.push({path: `details/${gid}`})
-      }else if(supply == 0){
+      }else if(supply == 0){ // 库存不足
         this.$toast('库存不足，正在补货中');
       }
     },
@@ -175,37 +180,37 @@ export default {
 
     // 与原生交互==================================
     // 切换钱包
-    CBswitchAccount(msg) {
-      // console.log('msg',msg);
-      if(msg){
-        window.localStorage.setItem('token',msg);
-        // this.walletInfo.balance = msg.balance
-      }else {
-        // this.walletInfo.balance = '-'
-      }
-    },
-    getOperatingSystem() {
-      if(/android/i.test(navigator.userAgent)){
-        return 'Android'
-      }
-      if(/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
-        return 'iOS'
-        }
-    },
-    // 原生交互事件
-    sendPraRequest(methodName, params, cbName) {
-      var device_type = this.getOperatingSystem()
-        var message = {
-        'method': methodName,
-        'params': params,
-        'callback': cbName
-        }
-      if (device_type === 'Android') {
-        window.ReactNativeWebView.postMessage('sendLarkMarketRequest=' + JSON.stringify(message))
-      } else if (device_type === 'iOS') {
-        window.webkit.messageHandlers.Larkshop.postMessage(message)
-      }
-    },
+    // CBswitchAccount(msg) {
+    //   // console.log('msg',msg);
+    //   if(msg){
+    //     window.localStorage.setItem('token',msg);
+    //     // this.walletInfo.balance = msg.balance
+    //   }else {
+    //     // this.walletInfo.balance = '-'
+    //   }
+    // },
+    // getOperatingSystem() {
+    //   if(/android/i.test(navigator.userAgent)){
+    //     return 'Android'
+    //   }
+    //   if(/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+    //     return 'iOS'
+    //     }
+    // },
+    // // 原生交互事件
+    // sendPraRequest(methodName, params, cbName) {
+    //   var device_type = this.getOperatingSystem()
+    //     var message = {
+    //     'method': methodName,
+    //     'params': params,
+    //     'callback': cbName
+    //     }
+    //   if (device_type === 'Android') {
+    //     window.ReactNativeWebView.postMessage('sendLarkMarketRequest=' + JSON.stringify(message))
+    //   } else if (device_type === 'iOS') {
+    //     window.webkit.messageHandlers.Larkshop.postMessage(message)
+    //   }
+    // },
 
   },
   mounted () {
@@ -223,7 +228,7 @@ export default {
     // 事件挂载到window上面
     window.CBswitchAccount = this.CBswitchAccount
 
-    this.sendPraRequest('getAccount',{},'CBswitchAccount')
+    // this.sendPraRequest('getAccount',{},'CBswitchAccount')
     
   }
 }
@@ -235,6 +240,7 @@ export default {
     height: 100%;
     max-width: 750px;
     min-width: 320px;
+    min-height: 90vh;
     margin: 0 auto;
     position: relative;
     padding-bottom: 90rem/@base;

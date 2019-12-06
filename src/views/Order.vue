@@ -6,11 +6,11 @@
       <div class="order_list" v-for="(item,index) in orders" :key="index">
         <div class="order_list_header">
           <div class="time">编号：{{ item.oid }}</div>
-          <template v-if="item.status == 1">
-            <div class="status">已发货</div>
-          </template>
           <template v-if="item.status == 0">
             <div class="status">交易成功</div>
+          </template>
+          <template v-if="item.status == 1">
+            <div class="status">已发货</div>
           </template>
         </div>
         <div class="order_list_info">
@@ -33,28 +33,36 @@
             <span>{{ Number(item.unit) * Number(item.amount) }} Lark</span>
           </div>
           <div class="pic_btn">
-            <span v-if="item.virtual == 0" class="check_order" @click="seeLog">查看物流</span>
+            <span v-if="item.attr == 0" class="check_order" @click="seeLog">查看物流</span>
             <router-link :to=" '/details/' + item.gid ">
               <span>重新购买</span>
             </router-link>
           </div>
-
+          
           <van-dialog
+            v-if="item.attr == 0" 
             v-model="dialog_show"
             title="物流信息"
             confirmButtonColor="#5829DB">
-          <div class="bullet_item">
-            <span>物流公司</span>
-            <span class="item_con firm"> 
-              {{ item.courier }}
-            </span>
-          </div>
-          <div class="bullet_item">
-            <span>物流单号</span>
-            <span class="item_con single_num"> 
-              {{ item.tracking }}
-            </span>
-          </div>
+            <template v-if="item.status == 0">
+              <div class="bullet_none">
+                暂无物流信息
+              </div>
+            </template>
+            <template v-if="item.status == 1">
+              <div class="bullet_item">
+                <span>物流公司</span>
+                <span class="item_con firm"> 
+                  {{ item.courier }}
+                </span>
+              </div>
+              <div class="bullet_item">
+                <span>物流单号</span>
+                <span class="item_con single_num"> 
+                  {{ item.tracking }}
+                </span>
+              </div>
+            </template>
           </van-dialog>
         </div>
       </div>
@@ -87,23 +95,7 @@ export default {
         iswallet: false, // 是否显示切换钱包按钮
         text: "我的订单" // 头部文案
       },
-      orders:[
-        // {
-        //   address: "M78星云",
-        //   amount: 1,
-        //   courier: null,
-        //   gid: 1,
-        //   image: "//img12.360buyimg.com/mobilecms/s372x372_jfs/t1/40586/1/11155/200870/5d49255fEa7738b29/b3e5895230af9915.jpg!q70.dpg.webp",
-        //   oid: 47,
-        //   phone: "13512345678",
-        //   receiver: "黑椒组长",
-        //   status: 0,
-        //   title: "IPhone 2019",
-        //   tracking: null,
-        //   unit: 5,
-        //   virtual: 0, // 实物
-        // }
-      ],
+      orders:[],
     };
   },
   mounted () {
@@ -218,6 +210,12 @@ export default {
   text-align: center;
   line-height: 80vh;
   font-size: 14px;
+}
+.bullet_none{
+  color: #7F7C94;
+  text-align: center;
+  font-size: 26rem/50;
+  padding: 35rem/50 38rem/50  ;
 }
 .bullet_item{
   display: flex;

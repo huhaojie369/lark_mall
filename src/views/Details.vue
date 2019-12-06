@@ -64,7 +64,7 @@
         <div class="exchange_btn" @click="nextBtn">下一步</div>
       </div>
     </van-action-sheet>
-
+    <!-- attr 0 实物 其他虚拟 -->
     <van-action-sheet v-if="detail.attr === 0" v-model="second_step" title="收货信息">
       <van-field v-model="receive_name" required clearable placeholder="请填写收货人姓名" />
       <van-field
@@ -158,9 +158,23 @@ export default {
       isLoading: false,
       // detals 里面默认添加一张图片，否则vue初始化时会报错
       detail: {
+        attr: 0,
+        bought: 1,
+        desc: "fddddddd",
+        exchanged: 4,
+        gid: 8,
         image: [
-          ""
-        ]
+          "http://wallet.admin/uploads/images/190809-8.png", 
+          "http://wallet.admin/uploads/images/190812-1.jpg"
+        ],
+        label: ["热门"],
+        limit: 5,
+        on_sale: null,
+        out_sale: null,
+        price: 99,
+        status: 1,
+        supply: 84,
+        title: "duke2",
       },
       tips: null,
       receive_name: null,
@@ -199,6 +213,13 @@ export default {
           this.receive_address = res.data.data.address;
         }
       });
+      // 两个值。一个是限购的值，另外一个是已购买值
+      console.log(this.detail.bought);
+      console.log(this.detail.limit);
+      if((this.stepper_value + this.detail.bought) > this.detail.limit){
+        this.$toast('超出限购数量，您当前已购买'+ this.detail.bought + '个，该商品限购数量为'  +this.detail.limit);
+        return false;
+      }
       this.first_step = false;
       this.second_step = true;
     },
@@ -250,7 +271,7 @@ export default {
     }
   },
   mounted() {
-    this.getDetails();
+    // this.getDetails();
 
     window.addEventListener("message",function(event) {
       if (event.data && event.data.type == "callback") {
@@ -258,7 +279,7 @@ export default {
           window[name](event.data.msg);
       }
     },false);
-  }
+  },
 };
 </script>
 

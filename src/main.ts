@@ -18,8 +18,8 @@ Vue.use( VueAxios, axios )
 Vue.use( Toast )
 
 // 配置公共的接口地址：
-// axios.defaults.baseURL = 'http://192.168.31.100/api/'
-axios.defaults.baseURL = 'https://larktest.lpl.app/api/'
+axios.defaults.baseURL = 'http://192.168.31.100/api/'
+// axios.defaults.baseURL = 'https://larktest.lpl.app/api/'
 
 
 // axios 拦截器
@@ -33,7 +33,7 @@ axios.interceptors.request.use(function (config) {
   // // 如果是login，不添加header
   // if (config.url.indexOf('login') <= -1) {
   //   // 给请求头中添加 Authorization 请求头：
-    config.headers.Authorization = localStorage.getItem('token')
+    config.headers.Authorization = 'Bearer' + localStorage.getItem('token')
 
   return config
 })

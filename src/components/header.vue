@@ -20,7 +20,7 @@
             <div class="wallet_over">
               余额
               <span v-if="integral_num" class="user_over">{{ integral_num }} Lark</span>
-              <span v-else class="user_over">-</span>
+              <span v-else class="user_over">0 Lark</span>
             </div>
             <!-- <div class="toogle_btn" @click.stop="toogleWallet">切换钱包</div> -->
           </div>
@@ -156,9 +156,10 @@ export default {
     border-style: solid;
     border-width: 0.18rem;
     position: absolute;
-    // right: 0.54rem;
-    right: 14px;
+    right: 0.54rem;
+    // right: 13px;
     top: -0.34rem;
+    z-index: 9999;
   }
   &::before {
     content: "";
@@ -168,8 +169,9 @@ export default {
     border-style: solid;
     border-width: 0.2rem;
     position: absolute;
-    // right: 0.52rem;
-    right: 13px;
+    z-index: 9999;
+    right: 0.52rem;
+    // right: 13.5px;
     top: -0.4rem;
   }
   .wallet_name,
