@@ -153,7 +153,7 @@ export default {
       // 判断是否已经到达开售时间
       if(productStatus == 2) return this.$toast('商品未开售');
       // 判断是否已经到达结束时间
-      if(productStatus == 3) return this.$toast('商品已下架');
+      if(productStatus == 3) return this.$toast('库存不足，正在补货中');
       // 正常商品
       if(supply != 0 &&  productStatus === 1) {
         this.$router.push({path: `details/${gid}`})
