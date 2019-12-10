@@ -130,7 +130,6 @@ export default {
 
       if(this.issubmit){
         this.axios.post('/questionnaires',{ answers: this.answers } ).then(res=>{
-          console.log(res);
           if(res.status === 200 ) {
             this.$toast('提交成功');
             this.$router.go(0);

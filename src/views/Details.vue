@@ -214,8 +214,6 @@ export default {
         }
       });
       // 两个值。一个是限购的值，另外一个是已购买值
-      console.log(this.detail.bought);
-      console.log(this.detail.limit);
       if((this.stepper_value + this.detail.bought) > this.detail.limit){
         this.$toast('超出限购数量，您当前已购买'+ this.detail.bought + '个，该商品限购数量为'  +this.detail.limit);
         return false;
