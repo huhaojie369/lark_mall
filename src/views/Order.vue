@@ -33,7 +33,7 @@
             <span>{{ Number(item.unit) * Number(item.amount) }} Lark</span>
           </div>
           <div class="pic_btn">
-            <span v-if="item.attr == 0" class="check_order" @click="seeLog">查看物流</span>
+            <span v-if="item.attr == 0 && item.status == 1" class="check_order" @click="seeLog">查看物流</span>
             <span @click="rebay(item.gid, item.status)">重新购买</span>
           </div>
           
