@@ -2,7 +2,7 @@
   <div class="survey_con">
     <div class="survey_header">
       <h2 class="survey_title">Lark Wallet 问卷调查</h2>
-      <p>您好，为了更好的服务Lark 用户的使用体验，丰富产品内容，我们策划了本次问卷调查，由衷的希望您根据个人实际感受认真作答哦，您的意见将会对我们的产品有很大的帮助，衷心感谢您的合作与支持</p>
+      <p>为了更好的服务Lark 用户，希望您根据个人实际感受认真作答，衷心感谢您的合作与支持</p>
     </div>
     <div class="survey_item" v-for="(item, index) in resdata" :key="index">
       <div class="item_title"> 
@@ -131,8 +131,10 @@ export default {
       if(this.issubmit){
         this.axios.post('/questionnaires',{ answers: this.answers } ).then(res=>{
           if(res.status === 200 ) {
-            this.$toast('提交成功');
-            this.$router.go(0);
+            this.$toast.success('提交成功');
+            setTimeout(()=>{
+              this.$router.go(0);
+            },1000)
           }
         })
       }
