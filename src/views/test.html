@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue.js小demo</title>
+    <style>
+        .color{color:#ccc;}
+        .active{color:red;}
+        li{cursor:pointer;}
+    </style>
+</head>
+<body>
+<ul id="app">
+    <div class="hello">
+        <ul v-for="(list,i) in list">
+		    	{{list.text}}
+          <li v-for="(lid, index) in list.choice" :class="{'active':list.color === index}" @click="changeBgc(i,index)">{{lid}}</li>
+        </ul>
+    </div>
+</ul>
+</body>
+<script src="https://cdn.bootcss.com/vue/2.2.6/vue.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data () {
+            return {
+                list: [
+                    {
+                        "text":"首页" ,
+                        "choice": [1,2,3,4],
+                        'color':false
+                    },
+                    {
+                        "text":"组件",
+                        "choice": [1,2,3,4],
+                        'color':false
+                    }
+							],
+            }
+        },
+        methods: {
+            changeBgc: function (i,index) {
+              this.list[i].color=index
+            }
+        }
+    })
+ 
+</script>
+</html>

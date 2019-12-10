@@ -34,9 +34,7 @@
           </div>
           <div class="pic_btn">
             <span v-if="item.attr == 0" class="check_order" @click="seeLog">查看物流</span>
-            <router-link :to=" '/details/' + item.gid ">
-              <span>重新购买</span>
-            </router-link>
+            <span @click="rebay(item.gid, item.status)">重新购买</span>
           </div>
           
           <van-dialog
@@ -105,8 +103,14 @@ export default {
     getorders() {
       this.axios.get(`/orders`).then((res) => {
         if(res.status === 200) this.orders = res.data.data
-        // console.log(this.orders);
       })      
+    },
+    rebay(id,status){
+      if(status === 1){
+        this.$router.push(`/details/ + ${id}`)
+      }else if( status != 1 ){
+        this.$toast('库存不足，正在补货中');
+      }
     },
     seeLog() {
       this.dialog_show = true;

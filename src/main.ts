@@ -6,6 +6,15 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import { Toast } from 'vant';
 
+
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
+})
+
 // 淘宝flexible rem js暂时没用
 // import 'lib-flexible/flexible';
 
