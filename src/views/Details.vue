@@ -10,7 +10,7 @@
           </van-swipe-item>
         </van-swipe>
       </div>
-      <div class="pic_title">
+      <div v-if="detail.title" class="pic_title">
         <h2>{{ detail.title }}</h2>
         <p>{{ detail.price }} Lark</p>
       </div>
@@ -157,7 +157,9 @@ export default {
       stepper_value: 1,
       isLoading: false,
       // detals 里面默认添加一张图片，否则vue初始化时会报错
-      detail: {},
+      detail: {
+        image:[]
+      },
       receive_name: null,
       receive_phone: null,
       receive_address: null
@@ -172,7 +174,10 @@ export default {
           this.detail.supply = this.detail.supply !== null ? this.detail.supply : 9999;
           this.detail.limit  = this.detail.limit !== null ? this.detail.limit : 9999;
         }
-      });
+      }).catch(err=>{
+        this.detail.tips = err.response.data.msg
+        this.$toast(err.response.data.msg);
+      })
     },
     onRefresh() {
       setTimeout(() => {
