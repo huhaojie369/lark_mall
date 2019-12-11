@@ -2,17 +2,26 @@
 <div class="order">
   <Header :headerobj="headerobj"></Header>
   <div class="order_content">
+    
     <template v-if="orders.length !== 0">
+      
       <div class="order_list" v-for="(item,index) in orders" :key="index">
+        
         <div class="order_list_header">
           <div class="time">编号：{{ item.order_id }}</div>
-          <template v-if="item.status == 0">
-            <div class="status">交易成功</div>
-          </template>
-          <template v-if="item.status == 1">
-            <div class="status">已发货</div>
-          </template>
+
+            <template v-if="item.status == 0">
+              <div class="status">交易成功</div>
+            </template>
+            <!-- 虚拟实物 状态判断 ======== -->
+            <!-- attr 0 实物 其他虚拟 -->
+            <template v-if="item.status == 1  || item.good != null && item.good.attr == 0 ">
+              <div class="status">已发货</div>
+            </template>
+
+
         </div>
+
         <div class="order_list_info">
           <div class="list_info_left">
             <template v-if="item.good != null">
@@ -44,7 +53,7 @@
           </div>
           <div class="pic_btn">
             <span v-if="item.attr == 0 && item.status == 1" class="check_order" @click="seeLog">查看物流</span>
-            <span v-if="item.good != null" @click="rebay(item.good.id, item.status)">重新购买</span>
+            <span v-if="item.good != null" @click="rebay(item.good.id, item.good.status)">重新购买</span>
           </div>
           
           <van-dialog
@@ -74,7 +83,9 @@
           </van-dialog>
         </div>
       </div>
+
     </template>
+    
     <template v-else>
       <div class="list_null">暂无订单信息</div>
     </template>
@@ -115,7 +126,7 @@ export default {
         if(res.status === 200) this.orders = res.data.data
       })      
     },
-    rebay(id,status){
+    rebay(id, status){
       if(status === 1){
         this.$router.push(`/details/${id}`)
       }else if( status != 1 ){
