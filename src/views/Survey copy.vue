@@ -4,7 +4,7 @@
       <h2 class="survey_title">Lark Wallet 问卷调查</h2>
       <p>为了更好的服务Lark 用户，希望您根据个人实际感受认真作答，衷心感谢您的合作与支持</p>
     </div>
-    <div class="survey_item" v-for="(item, index) in Sdata" :key="index">
+    <div class="survey_item" v-for="(item, index) in resdata" :key="index">
       <div class="item_title"> 
         <template v-if="index < 9">
          0{{ index + 1 }} 
@@ -16,11 +16,13 @@
       </div>
       <!-- 单选 -->
       <template v-if="item.multiple == 1">
-        <van-radio-group v-model="item.choices[0]">
+        <van-radio-group v-model="item.times">
           <van-cell-group>
             <van-cell
                 v-for="(key, ops) in item.options"
-                :key="ops">
+                :key="ops"  
+                clickable 
+                @click="radioClick(item.id,ops)" >
               <van-radio  :name="ops" checked-color="#5829db">
                 {{ ops }}、 {{ key }}
               </van-radio>
@@ -30,7 +32,7 @@
       </template>
       <!-- 多选 -->
       <template v-if="item.multiple > 1" >
-        <van-checkbox-group v-model="item.choices[0]" :max="item.multiple">
+        <van-checkbox-group v-model="item.times" :max="item.multiple" @change="singleChecked(item.id)">
           <van-cell-group>  
             <van-cell 
               v-for="(checkboxs, keys) in item.options" 
@@ -48,13 +50,14 @@
       <template  v-if="item.multiple === 0">
         <van-cell-group>
           <van-field
-            v-model="item.choices"
+            v-model="message"
             rows="2"
             autosize
             type="textarea"
             maxlength="100"
             placeholder="请输入留言"
             show-word-limit
+            @blur="submsg(item.id)"
           />
         </van-cell-group>
       </template>
@@ -79,40 +82,51 @@ export default {
   },
   data() {
     return {
+      message: '',
       checked: [], 
-      Sdata: [], // 问卷列表
+      resdata: [], // 问卷列表
       answers: [], // 提交数据
       issubmit: false,
     };
   },
   methods: {
+    radioClick(id,ops) {
+      this.answers.filter(im => { if(im.id === id ) return im.choices = [ops] })
+    },
+    singleChecked(checkedID) {
+      this.answers.filter(im => { if(im.id === checkedID ) return im.choices = this.checked })
+    },
     // 获取问卷
     getQuestionnaires() {
       this.axios.get('/questionnaires').then((res)=>{
         if(res.status === 200){
-          this.Sdata = res.data.data.map(x =>{
-            if(x.multiple === 0) return { ...x , choices:''} // 0 是字符串
-            return { ...x,  choices:[]} // 往数据中添加一个字段，用于区别每一项
+          this.resdata = res.data.data.map(x =>{
+            return { ...x, times: []} // 往数据中添加一个字段，用于区别每一项
+          })
+          // 动态初始化一个提交表单数组
+          this.answers = res.data.data.map(s =>{
+            if(s.multiple === 0) return { id: s.id , choices:''} // 0 是字符串
+            return { id: s.id , choices:[]} // 其他是数组
           })
         }
       })
     },
+    // 同步问卷意见
+    submsg(ID) {
+      this.answers.filter(im => { if(im.id === ID ) return im.choices = this.message })
+    },
     // 提交
     submitSurvey(){
-      // 同步选项数据
-      this.answers = this.Sdata.map(x=>{
-        return { id: x.id, choices: x.choices }
-      })
-      // 循环判断是否为空 
-      this.Sdata.forEach(im =>{ 
-        if(im.choices === "" && im.choices.length === 0){
+
+      this.answers.forEach(im =>{ 
+        if(im.choices == "" || im.choices.length === 0){
           this.$toast('请完整填写后提交');
           this.issubmit = false
         }else{
           this.issubmit = true
         }
-      });
-      // 为真时提交
+      })
+
       if(this.issubmit){
         this.axios.post('/questionnaires',{ answers: this.answers } ).then(res=>{
           if(res.status === 200 ) {
@@ -121,8 +135,6 @@ export default {
               this.$router.go(0);
             },1000)
           }
-        }).catch(err=>{
-          return this.$toast(err.response.data.msg);
         })
       }
 

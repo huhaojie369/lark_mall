@@ -17,10 +17,10 @@
                 span="12" 
                 v-for="(item,index) in mallList"
                 :key="index">
-                <div class="MHomeLink" @click="goDetails(item.gid, item.supply, item.status)">
+                <div class="MHomeLink" @click="goDetails(item.id, item.supply, item.status)">
                   <div class="link_header">
                     <img @error="defImg()" :src="item.image[0]">
-                    <div class="sellout_tips" v-if="item.supply <= 0">
+                    <div class="sellout_tips" v-if="item.supply == 0">
                       已售罄 补货中
                     </div>
                     <div class="sellout_tips" v-if="item.status === 2">
@@ -136,7 +136,7 @@ export default {
     },
     // 获取商品列表
     getMalls() {
-      this.axios.get(`/mall`).then((res) => {
+      this.axios.get(`/goods`).then((res) => {
         if(res.status === 200) {
           this.mallList = res.data.data
         }
@@ -149,14 +149,14 @@ export default {
       }, 500);
     },
     // 判断是跳转至详情页面
-    goDetails(gid, supply, productStatus) {
+    goDetails(id, supply, productStatus) {
       // 判断是否已经到达开售时间
       if(productStatus == 2) return this.$toast('商品未开售');
       // 判断是否已经到达结束时间
       if(productStatus == 3) return this.$toast('库存不足，正在补货中');
       // 正常商品
       if(supply != 0 &&  productStatus === 1) {
-        this.$router.push({path: `details/${gid}`})
+        this.$router.push({path: `details/${id}`})
       }else if(supply == 0){ // 库存不足
         this.$toast('库存不足，正在补货中');
       }

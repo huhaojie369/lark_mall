@@ -5,7 +5,7 @@
     <template v-if="orders.length !== 0">
       <div class="order_list" v-for="(item,index) in orders" :key="index">
         <div class="order_list_header">
-          <div class="time">编号：{{ item.oid }}</div>
+          <div class="time">编号：{{ item.order_id }}</div>
           <template v-if="item.status == 0">
             <div class="status">交易成功</div>
           </template>
@@ -16,13 +16,19 @@
         <div class="order_list_info">
           <div class="list_info_left">
             <img
-              :src="item.image"
             />
           </div>
           <div class="list_info_right">
-            <div class="right_title">{{ item.title }}</div>
+            <div class="right_title">
+              <template v-if="item.good == null">
+                商品已下架
+              </template>
+              <template v-else>
+                {{ item.good.title }}
+              </template>
+            </div>
             <div class="right_pic">
-              <span>{{ item.price }} Lark</span>
+              <span>{{ item.unit }} Lark</span>
               <span>x{{ item.amount }}</span>
             </div>
           </div>
@@ -103,6 +109,10 @@ export default {
     getorders() {
       this.axios.get(`/orders`).then((res) => {
         if(res.status === 200) this.orders = res.data.data
+        console.log(this.orders);
+        this.orders.forEach((x)=>{
+          console.log(x.good.title);
+        })
       })      
     },
     rebay(id,status){

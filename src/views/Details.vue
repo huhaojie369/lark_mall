@@ -54,7 +54,7 @@
               v-model="stepper_value"
             />
             <div class="stint_num">
-              <template v-if="stepper_value >= detail.supply || detail.supply == null">库存不足</template>
+              <template v-if="stepper_value >= detail.supply">库存不足</template>
               <template
                 v-if="stepper_value >= detail.limit && detail.limit != null"
               >每人限购{{ detail.limit }}份</template>
@@ -157,26 +157,7 @@ export default {
       stepper_value: 1,
       isLoading: false,
       // detals 里面默认添加一张图片，否则vue初始化时会报错
-      detail: {
-        attr: 0,
-        bought: 1,
-        desc: "fddddddd",
-        exchanged: 4,
-        gid: 8,
-        image: [
-          "http://wallet.admin/uploads/images/190809-8.png", 
-          "http://wallet.admin/uploads/images/190812-1.jpg"
-        ],
-        label: ["热门"],
-        limit: 5,
-        on_sale: null,
-        out_sale: null,
-        price: 99,
-        status: 1,
-        supply: 84,
-        title: "duke2",
-      },
-      tips: null,
+      detail: {},
       receive_name: null,
       receive_phone: null,
       receive_address: null
@@ -185,10 +166,12 @@ export default {
 
   methods: {
     getDetails() {
-      this.axios.get(`/mall/${this.$route.params.id}`).then(res => {
+      this.axios.get(`/goods/${this.$route.params.id}`).then(res => {
         if (res.status === 200) {
-          this.detail = res.data.data.good;
-          this.tips = res.data.data.tag;
+          console.log(res);
+          this.detail = res.data.data;
+          this.detail.supply = this.detail.supply !== null ? this.detail.supply : 9999;
+          this.detail.limit  = this.detail.limit !== null ? this.detail.limit : 9999;
         }
       });
     },
@@ -202,11 +185,11 @@ export default {
       if (this.detail.status == 1) {
         this.first_step = true;
       } else {
-        this.$toast(this.tips);
+        this.$toast(this.detail.tips);
       }
     },
     nextBtn() {
-      this.axios.get(`/receiver-info`).then(res => {
+      this.axios.get(`/orders/receiver`).then(res => {
         if (res.status === 200 && res.data.data != null) {
           this.receive_name = res.data.data.name;
           this.receive_phone = res.data.data.phone;
@@ -245,16 +228,19 @@ export default {
             amount: this.stepper_value,
             name: this.receive_name,
             address: this.receive_address,
-            phone: this.receive_phone
+            phone: this.receive_phone,
+            id: this.detail.id,
           };
         } else {
           params = {
+            id: this.detail.id,
             amount: this.stepper_value
           };
         }
 
+        // if() 129 & (~0x80)
         this.axios
-          .post(`/mall/${this.detail.gid}`, params)
+          .post(`/orders`, params)
           .then(res => {
             if (res.status === 200) {
               return this.$router.push("/status");
@@ -266,10 +252,13 @@ export default {
       }).catch(() => {
         // on cancel
       });
+
+
+
     }
   },
   mounted() {
-    // this.getDetails();
+    this.getDetails();
 
     window.addEventListener("message",function(event) {
       if (event.data && event.data.type == "callback") {
