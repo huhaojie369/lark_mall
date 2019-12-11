@@ -168,7 +168,6 @@ export default {
     getDetails() {
       this.axios.get(`/goods/${this.$route.params.id}`).then(res => {
         if (res.status === 200) {
-          console.log(res);
           this.detail = res.data.data;
           this.detail.supply = this.detail.supply !== null ? this.detail.supply : 9999;
           this.detail.limit  = this.detail.limit !== null ? this.detail.limit : 9999;
@@ -238,20 +237,25 @@ export default {
           };
         }
 
+        //  判断VIP 实物
+        let router
         // if() 129 & (~0x80)
-        this.axios
-          .post(`/orders`, params)
-          .then(res => {
-            if (res.status === 200) {
-              return this.$router.push("/status");
-            }
-          })
-          .catch(err => {
-            return this.$toast(err.response.data.msg);
-          });
-      }).catch(() => {
-        // on cancel
-      });
+        if(this.detail.attr > 128){
+          params = {level:  this.detail.attr - 128}
+          router = '/members'
+        }else{
+          router = '/orders'
+        }
+
+        this.axios.post(router, params).then(res => {
+          if (res.status === 200) {
+            return this.$router.push("/status");
+          }
+        }).catch(err => {
+          return this.$toast(err.response.data.msg);
+        });
+
+      })
 
 
 

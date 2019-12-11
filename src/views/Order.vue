@@ -15,8 +15,12 @@
         </div>
         <div class="order_list_info">
           <div class="list_info_left">
-            <img
-            />
+            <template v-if="item.good != null">
+              <img :src="item.good.image[0]" />
+            </template>
+            <template v-else>
+              <img src="../assets/images/logo.svg" alt="">
+            </template>
           </div>
           <div class="list_info_right">
             <div class="right_title">
@@ -40,7 +44,7 @@
           </div>
           <div class="pic_btn">
             <span v-if="item.attr == 0 && item.status == 1" class="check_order" @click="seeLog">查看物流</span>
-            <span @click="rebay(item.gid, item.status)">重新购买</span>
+            <span v-if="item.good != null" @click="rebay(item.good.id, item.status)">重新购买</span>
           </div>
           
           <van-dialog
@@ -109,15 +113,11 @@ export default {
     getorders() {
       this.axios.get(`/orders`).then((res) => {
         if(res.status === 200) this.orders = res.data.data
-        console.log(this.orders);
-        this.orders.forEach((x)=>{
-          console.log(x.good.title);
-        })
       })      
     },
     rebay(id,status){
       if(status === 1){
-        this.$router.push(`/details/ + ${id}`)
+        this.$router.push(`/details/${id}`)
       }else if( status != 1 ){
         this.$toast('库存不足，正在补货中');
       }
@@ -167,7 +167,7 @@ export default {
     .list_info_left{
       width: 70px;
       height: 70px;
-      background:rgba(127,124,148,1);
+      background:#fafafa;
       border-radius:4px;
       img{
         width: 100%;
