@@ -101,6 +101,8 @@ export default {
     submitSurvey(){
       // 同步选项数据
       this.answers = this.Sdata.map(x=>{
+        if(x.multiple > 1) return { id: x.id, choices: x.choices[0] }
+
         return { id: x.id, choices: x.choices }
       })
       // 循环判断是否为空 
@@ -118,19 +120,48 @@ export default {
           if(res.status === 200 ) {
             this.$toast.success('提交成功');
             setTimeout(()=>{
-              this.$router.go(0);
-            },1000)
+              this.sendPraRequest("closeMall") // 关闭商城
+            },1500)
           }
         }).catch(err=>{
           return this.$toast(err.response.data.msg);
         })
       }
 
-    }
+    },
+    getOperatingSystem() {
+      if(/android/i.test(navigator.userAgent)){
+        return 'Android'
+      }
+      if(/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+        return 'iOS'
+        }
+    },
+    // 原生交互事件
+    sendPraRequest(methodName, params, cbName) {
+      var device_type = this.getOperatingSystem()
+        var message = {
+        'method': methodName,
+        'params': params,
+        'callback': cbName
+        }
+      if (device_type === 'Android') {
+        window.ReactNativeWebView.postMessage('sendLarkMarketRequest=' + JSON.stringify(message))
+      } else if (device_type === 'iOS') {
+        window.webkit.messageHandlers.Larkshop.postMessage(message)
+      }
+    },
   },
   mounted () {
     this.getQuestionnaires()
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type == 'callback') {
+        var name = event.data.name;
+        window[name](event.data.msg)
+      }
+    }, false);
   },
+
 };
 </script>
 

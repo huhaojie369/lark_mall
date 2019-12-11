@@ -109,7 +109,7 @@ export default {
   },
   mounted() {
     // 获取用户信息
-    // this.getMe()
+    this.getMe()
     window.addEventListener('message', function(event) {
       if (event.data && event.data.type == 'callback') {
         // console.log(event.data);
